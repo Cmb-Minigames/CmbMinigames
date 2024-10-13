@@ -1,0 +1,5 @@
+database:
+  # MONGO DB
+  uri: ""
+  databaseName: ""
+  partyCollection: ""

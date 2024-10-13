@@ -3,6 +3,7 @@ package xyz.devcmb.cmbminigames;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.devcmb.cmbminigames.commands.RegisterCommands;
 import xyz.devcmb.cmbminigames.listeners.RegisterListeners;
+import xyz.devcmb.cmbminigames.misc.Database;
 
 import java.util.logging.Logger;
 
@@ -22,9 +23,11 @@ public final class CmbMinigames extends JavaPlugin {
         VERSION = getDescription().getVersion();
         plugin = this;
 
-        LOGGER.info("Cmb Minigames has awoken");
+        Database.connect();
         RegisterCommands.register();
         RegisterListeners.register();
+
+        LOGGER.info("Cmb Minigames has awoken");
     }
 
     @Override
