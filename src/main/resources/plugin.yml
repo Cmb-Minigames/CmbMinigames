@@ -6,3 +6,7 @@ prefix: CmbMinigames
 authors: [ DevCmb ]
 description: An open-source minigame server plugin, inspired by Blockwars and Hypixel
 website: devcmb.xyz
+commands:
+  cm:
+    description: "View the version for Cmb Minigames"
+    usage: /<command>
