@@ -9,5 +9,6 @@ public class RegisterListeners {
         PluginManager pluginManager = plugin.getServer().getPluginManager();
 
         pluginManager.registerEvents(new DeathEffects(), CmbMinigames.getPlugin());
+        pluginManager.registerEvents(new PartyMenuListener(), CmbMinigames.getPlugin());
     }
 }

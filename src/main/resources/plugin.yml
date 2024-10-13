@@ -10,3 +10,6 @@ commands:
   cm:
     description: "View the version for Cmb Minigames"
     usage: /<command>
+  party:
+    description: "View your party"
+    usage: /<command>
