@@ -4,8 +4,9 @@ main: xyz.devcmb.cmbminigames.CmbMinigames
 api-version: '1.21'
 prefix: CmbMinigames
 authors: [ DevCmb ]
-description: An open-source minigame server plugin, inspired by Blockwars and Hypixel
+description: An open-source minigame server plugin, inspired by Blockwars and MCCI
 website: devcmb.xyz
+database: true
 commands:
   cm:
     description: "View the version for Cmb Minigames"
@@ -13,3 +14,10 @@ commands:
   party:
     description: "View your party"
     usage: /<command>
+  minigame:
+    description: "Manage a minigame"
+    usage: /<command> [name] [start|end|activate|deactivate]
+permissions:
+  cmbminigames.manager:
+    description: "Allows permission to run any minigame"
+    default: op
