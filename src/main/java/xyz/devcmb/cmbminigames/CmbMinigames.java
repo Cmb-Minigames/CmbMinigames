@@ -11,6 +11,7 @@ public final class CmbMinigames extends JavaPlugin {
 
     public static Logger LOGGER;
     public static String VERSION;
+    public static boolean PluginDisabled = false;
     private static CmbMinigames plugin;
 
     public static CmbMinigames getPlugin() {
@@ -23,7 +24,16 @@ public final class CmbMinigames extends JavaPlugin {
         VERSION = getDescription().getVersion();
         plugin = this;
 
+        saveDefaultConfig();
+
         Database.connect();
+
+        if(PluginDisabled){
+            LOGGER.severe("Cmb Minigames has been disabled due to an error");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         RegisterCommands.register();
         RegisterListeners.register();
 

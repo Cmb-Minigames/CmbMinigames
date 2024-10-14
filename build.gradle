@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'xyz.devcmb'
@@ -18,8 +19,17 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT")
-    implementation 'org.mongodb:mongodb-driver-sync:5.2.0'
+    implementation("org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT")
+    implementation 'org.mongodb:mongodb-driver-sync:4.11.0'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    mergeServiceFiles()
+}
+
+build {
+    dependsOn shadowJar
 }
 
 def targetJavaVersion = 21

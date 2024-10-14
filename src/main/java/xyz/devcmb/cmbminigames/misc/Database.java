@@ -19,11 +19,12 @@ public class Database {
         String partyCollectionName = config.getString("database.partyCollection");
 
         if(
-            (uri == null || !uri.startsWith("mongodb://"))
+            (uri == null || !uri.startsWith("mongodb"))
             || (databaseName == null || databaseName.isEmpty())
             || (partyCollectionName == null || partyCollectionName.isEmpty())
         ){
             CmbMinigames.LOGGER.severe("Database configuration is invalid");
+            CmbMinigames.PluginDisabled = true;
             return;
         }
 
