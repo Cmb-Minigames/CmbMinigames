@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ManhuntController implements Minigame {
-    public static List<Player> Runners = Arrays.asList();
-    public static List<Player> Hunters = Arrays.asList();
+    public static List<Player> Runners = List.of();
+    public static List<Player> Hunters = List.of();
 
 
     public void setRunner(Player player){

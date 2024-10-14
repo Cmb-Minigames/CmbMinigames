@@ -17,6 +17,10 @@ public class MinigameController {
     public static Minigame ActiveMinigame = null;
     public static Minigame PlayingMinigame = null;
 
+    public static Minigame getById(String id){
+        return MINIGAMES.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+    }
+
     public static boolean isMinigameActive(String MinigameID) {
         return (ActiveMinigame != null) && (ActiveMinigame.getId().equals(MinigameID));
     }
@@ -53,6 +57,7 @@ public class MinigameController {
             ActiveMinigame.resetGame();
         }
 
+        ActiveMinigame = minigame;
         minigame.activateGame(executor);
     }
 
@@ -69,6 +74,8 @@ public class MinigameController {
             if(!automaticTrigger) executor.sendMessage(ChatColor.RED + "A minigame is already being played!");
             return;
         }
+
+        ActiveMinigame = null;
 
         minigame.deactivateGame(executor);
     }

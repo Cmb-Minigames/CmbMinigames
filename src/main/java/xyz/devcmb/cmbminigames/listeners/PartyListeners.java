@@ -106,6 +106,8 @@ public class PartyListeners implements Listener {
             } else if(event.getCurrentItem().getItemMeta().getItemName().endsWith("'s Party")) {
                 String playerName = event.getCurrentItem().getItemMeta().getItemName().split("'")[0];
                 PartyController.JoinParty(player, playerName);
+                player.closeInventory();
+                PartyMenu.showPartyMembers(player);
             }
         } else if(title.equals(ChatColor.WHITE + "Invite Member")){
             if(event.getCurrentItem().getItemMeta().getItemName().equals("Close")){
@@ -120,6 +122,8 @@ public class PartyListeners implements Listener {
             } else {
                 String playerName = event.getCurrentItem().getItemMeta().getItemName();
                 PartyController.InviteToParty(player, playerName);
+                player.closeInventory();
+                PartyMenu.showPartyMembers(player);
             }
         }
     }

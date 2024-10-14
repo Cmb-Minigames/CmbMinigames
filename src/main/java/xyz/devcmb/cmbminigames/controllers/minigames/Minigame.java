@@ -2,6 +2,8 @@ package xyz.devcmb.cmbminigames.controllers.minigames;
 
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public interface Minigame {
     String getId();
     String getName();
@@ -13,4 +15,6 @@ public interface Minigame {
     void startGame(Player player);
     void endGame(Player player);
     void resetGame();
+
+    default void setHunter(Player p){};
 }

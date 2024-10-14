@@ -17,6 +17,12 @@ commands:
   minigame:
     description: "Manage a minigame"
     usage: /<command> [name] [start|end|activate|deactivate]
+  hunter:
+    description: "Register as a hunter for manhunt"
+    usage: /<command>
+  runner:
+    description: "Register as a runner for manhunt"
+    usage: /<command>
 permissions:
   cmbminigames.manager:
     description: "Allows permission to run any minigame"

@@ -201,7 +201,7 @@ public class PartyMenu {
             List<Player> availablePlayers = new ArrayList<>();
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 boolean inParty = partyCollection.find(Filters.in("members", onlinePlayer.getUniqueId().toString())).iterator().hasNext();
-                if (!inParty) {
+                if (!inParty && !party.getList("invites", String.class).contains(onlinePlayer.getUniqueId().toString())) {
                     availablePlayers.add(onlinePlayer);
                 }
             }

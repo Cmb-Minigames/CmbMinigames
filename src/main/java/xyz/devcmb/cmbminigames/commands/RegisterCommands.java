@@ -12,5 +12,7 @@ public class RegisterCommands {
         Objects.requireNonNull(plugin.getCommand("party")).setExecutor(new PartyCommand());
         Objects.requireNonNull(plugin.getCommand("minigame")).setExecutor(new MinigameCommand());
         Objects.requireNonNull(plugin.getCommand("minigame")).setTabCompleter(new MinigameAutocomplete());
+        Objects.requireNonNull(plugin.getCommand("hunter")).setExecutor(new HunterCommand());
+        Objects.requireNonNull(plugin.getCommand("runner")).setExecutor(new RunnerCommand());
     }
 }

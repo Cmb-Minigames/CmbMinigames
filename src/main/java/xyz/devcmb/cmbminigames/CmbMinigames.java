@@ -18,7 +18,7 @@ public final class CmbMinigames extends JavaPlugin {
     public static Logger LOGGER;
     public static String VERSION;
     public static boolean PluginDisabled = false;
-    public static boolean DeveloperModeEnabled = true;
+    public static boolean DeveloperModeEnabled = false;
     private static CmbMinigames plugin;
 
     public static CmbMinigames getPlugin() {
