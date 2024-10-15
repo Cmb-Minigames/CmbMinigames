@@ -11,17 +11,17 @@ import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
 
 public class HunterCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         ManhuntController mhc = (ManhuntController) MinigameController.getById("manhunt");
-        if(commandSender instanceof Player p){
+        if(sender instanceof Player p){
             if(MinigameController.isMinigameActive("manhunt")){
-                mhc.setHunter(p);
-                Bukkit.broadcastMessage(p.getDisplayName() + " -> " + ChatColor.BOLD + ChatColor.RED + "Hunter");
+                Boolean success = mhc.setHunter(p);
+                if(success) Bukkit.broadcastMessage(p.getDisplayName() + " -> " + ChatColor.BOLD + ChatColor.RED + "Hunter");
             } else {
-                commandSender.sendMessage(ChatColor.RED + "Manhunt is not currently active");
+                sender.sendMessage(ChatColor.RED + "Manhunt is not currently active");
             }
         } else {
-            commandSender.sendMessage(ChatColor.RED + "Only players can execute this command");
+            sender.sendMessage(ChatColor.RED + "Only players can execute this command");
         }
 
         return true;

@@ -15,6 +15,4 @@ public interface Minigame {
     void startGame(Player player);
     void endGame(Player player);
     void resetGame();
-
-    default void setHunter(Player p){};
 }

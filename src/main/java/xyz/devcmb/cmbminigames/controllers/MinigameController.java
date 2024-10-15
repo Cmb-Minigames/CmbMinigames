@@ -103,6 +103,8 @@ public class MinigameController {
         }
 
         PlayingMinigame = null;
+        ActiveMinigame = null;
+
         minigame.endGame(executor);
     }
 

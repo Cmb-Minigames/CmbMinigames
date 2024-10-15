@@ -31,7 +31,8 @@ public class DeathEffects implements Listener {
         "{player} forgot that no one jumps for the beef",
         "{player} watched skibidi toilet",
         "{player} got banned from discord",
-        "{player} got rejected"
+        "{player} got rejected",
+        "{player} forgot to touch grass"
     };
 
     @EventHandler
