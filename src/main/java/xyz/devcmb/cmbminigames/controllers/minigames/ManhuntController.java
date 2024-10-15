@@ -71,32 +71,32 @@ public class ManhuntController implements Minigame {
     }
 
     @Override
-    public void activateGame(Player player) {
+    public void activateGame(Player player, Boolean automaticTrigger) {
         Utilities.AnnounceMinigame(this);
     }
 
     @Override
-    public void deactivateGame(Player player) {}
+    public void deactivateGame(Player player, Boolean automaticTrigger) {}
 
     @Override
-    public void startGame(Player player){
+    public void startGame(Player player, Boolean automaticTrigger){
         if(
             (Runners.isEmpty() || Hunters.isEmpty())
             && !CmbMinigames.DeveloperModeEnabled
         ){
-            player.sendMessage(ChatColor.RED + "Not enough players to start the game");
+            if(!automaticTrigger) player.sendMessage(ChatColor.RED + "Not enough players to start the game");
             return;
         }
 
-        CmbMinigames.LOGGER.info("Runners: " + Runners.toString() + " | Hunters: " + Hunters.toString());
+        CmbMinigames.LOGGER.info("Runners: " + Runners + " | Hunters: " + Hunters);
 
         for(Player runner : Runners) {
-            Utilities.doCountdown(runner, 10);
+            Utilities.Countdown(runner, 10);
             runner.setGameMode(GameMode.SPECTATOR);
             runner.getInventory().clear();
         }
         for(Player hunter : Hunters){
-            Utilities.doCountdown(hunter, 10);
+            Utilities.Countdown(hunter, 10);
             hunter.setGameMode(GameMode.SPECTATOR);
             hunter.getInventory().clear();
         }
@@ -178,11 +178,11 @@ public class ManhuntController implements Minigame {
                     }
                 }.runTaskTimer(CmbMinigames.getPlugin(), 0, 100);
             }
-        }.runTaskLater(CmbMinigames.getPlugin(), 10 * 20);
+        }.runTaskLater(CmbMinigames.getPlugin(), 10);
     }
 
     @Override
-    public void endGame(Player player) {
+    public void endGame(Boolean automaticTrigger) {
         if(AliveRunners.isEmpty()){
             for(Player hunter: Hunters){
                 hunter.sendTitle(ChatColor.BOLD.toString() + ChatColor.GOLD + "VICTORY", "You have won the game!", 5, 120, 5);
@@ -207,7 +207,7 @@ public class ManhuntController implements Minigame {
     }
 
     @Override
-    public void resetGame() {
+    public void resetGame(Boolean automaticTrigger) {
         Runners.clear();
         Hunters.clear();
     }

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import xyz.devcmb.cmbminigames.CmbMinigames;
+import xyz.devcmb.cmbminigames.controllers.minigames.BlockShuffleController;
 import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
 import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
 
@@ -37,6 +38,7 @@ public class MinigameController {
 
     public static void registerAllMinigames(){
         registerMinigame(new ManhuntController());
+        registerMinigame(new BlockShuffleController());
     }
 
     public static void activateMinigame(Player executor, String id, Boolean automaticTrigger){
@@ -54,11 +56,11 @@ public class MinigameController {
         }
 
         if(ActiveMinigame != null){
-            ActiveMinigame.resetGame();
+            ActiveMinigame.resetGame(automaticTrigger);
         }
 
         ActiveMinigame = minigame;
-        minigame.activateGame(executor);
+        minigame.activateGame(executor, automaticTrigger);
     }
 
     public static void deactivateMinigame(Player executor, String id, Boolean automaticTrigger){
@@ -77,7 +79,7 @@ public class MinigameController {
 
         ActiveMinigame = null;
 
-        minigame.deactivateGame(executor);
+        minigame.deactivateGame(executor, automaticTrigger);
     }
 
     public static void startMinigame(Player executor, String id, Boolean automaticTrigger){
@@ -90,7 +92,7 @@ public class MinigameController {
         }
 
         PlayingMinigame = minigame;
-        minigame.startGame(executor);
+        minigame.startGame(executor, automaticTrigger);
     }
 
     public static void endMinigame(Player executor, String id, Boolean automaticTrigger){
@@ -105,7 +107,7 @@ public class MinigameController {
         PlayingMinigame = null;
         ActiveMinigame = null;
 
-        minigame.endGame(executor);
+        minigame.endGame(automaticTrigger);
     }
 
     public static void resetMinigame(Player executor, String id, Boolean automaticTrigger){
@@ -117,6 +119,6 @@ public class MinigameController {
             return;
         }
 
-        minigame.resetGame();
+        minigame.resetGame(automaticTrigger);
     }
 }

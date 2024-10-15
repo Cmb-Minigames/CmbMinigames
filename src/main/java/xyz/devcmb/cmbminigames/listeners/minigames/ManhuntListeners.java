@@ -9,10 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.ItemFlag;
@@ -20,8 +17,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.controllers.MinigameController;
 import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
-
-import java.util.Objects;
 
 public class ManhuntListeners implements Listener {
 
@@ -77,6 +72,15 @@ public class ManhuntListeners implements Listener {
     }
 
     @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if(!MinigameController.isMinigameBeingPlayed("manhunt")) return;
+        ManhuntController mhc = (ManhuntController) MinigameController.getById("manhunt");
+
+        mhc.Hunters.add(player);
+    }
+
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent event){
         Location location = new Location(event.getPlayer().getWorld(), event.getPlayer().getLocation().getX(), event.getPlayer().getLocation().getY() - 1, event.getPlayer().getLocation().getZ());
         World world = location.getWorld();
@@ -90,7 +94,6 @@ public class ManhuntListeners implements Listener {
                 if (mhc.AliveRunners.contains(player)) {
                     CmbMinigames.LOGGER.info("Player " + player.getDisplayName() + " has entered the end portal, ending game.");
                     mhc.RunnerWin = true;
-                    mhc.endGame(player);
                 }
             }
         }

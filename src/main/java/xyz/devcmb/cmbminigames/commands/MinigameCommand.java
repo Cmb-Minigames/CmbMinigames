@@ -10,7 +10,6 @@ import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class MinigameCommand implements CommandExecutor {
 
@@ -67,6 +66,8 @@ public class MinigameCommand implements CommandExecutor {
                 default:
                     commandSender.sendMessage(ChatColor.RED + "Invalid action. Valid actions are activate, deactivate, start, end, and reset");
             }
+        } else {
+            commandSender.sendMessage(ChatColor.RED + "You do not have the permission cmbminigames.minigame." + args[0].toLowerCase());
         }
 
         return true;

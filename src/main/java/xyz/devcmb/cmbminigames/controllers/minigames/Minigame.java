@@ -1,8 +1,5 @@
 package xyz.devcmb.cmbminigames.controllers.minigames;
-
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public interface Minigame {
     String getId();
@@ -10,9 +7,9 @@ public interface Minigame {
     String getDescription();
     String getVersion();
 
-    void activateGame(Player player);
-    void deactivateGame(Player player);
-    void startGame(Player player);
-    void endGame(Player player);
-    void resetGame();
+    void activateGame(Player player, Boolean automaticTrigger);
+    void deactivateGame(Player player, Boolean automaticTrigger);
+    void startGame(Player player, Boolean automaticTrigger);
+    void endGame(Boolean automaticTrigger);
+    void resetGame(Boolean automaticTrigger);
 }

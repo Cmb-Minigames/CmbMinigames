@@ -1,17 +1,14 @@
 package xyz.devcmb.cmbminigames.misc;
 
 import org.bukkit.*;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
-
-import java.util.concurrent.CountDownLatch;
+import java.util.Random;
 
 public class Utilities {
-    public static void doCountdown(Player player, int totalSeconds){
+    public static void Countdown(Player player, int totalSeconds){
         new BukkitRunnable(){
             int seconds = totalSeconds;
             @Override
@@ -47,5 +44,12 @@ public class Utilities {
         for(Player plr : Bukkit.getOnlinePlayers()){
             plr.sendTitle(ChatColor.BOLD + minigame.getName(), ChatColor.YELLOW + minigame.getDescription(), 5, 120, 5);
         }
+    }
+
+    public static Material GetRandomBlock(){
+        Material[] blocks = BlockShuffleBlocks.Blocks;
+        Random random = new Random();
+        int randomIndex = random.nextInt(blocks.length);
+        return blocks[randomIndex];
     }
 }

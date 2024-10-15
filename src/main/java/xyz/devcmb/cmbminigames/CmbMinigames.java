@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.devcmb.cmbminigames.commands.RegisterCommands;
 import xyz.devcmb.cmbminigames.controllers.MinigameController;
 import xyz.devcmb.cmbminigames.controllers.PartyController;
-import xyz.devcmb.cmbminigames.listeners.PartyListeners;
 import xyz.devcmb.cmbminigames.listeners.RegisterListeners;
 import xyz.devcmb.cmbminigames.misc.Database;
 
@@ -18,7 +17,7 @@ public final class CmbMinigames extends JavaPlugin {
     public static Logger LOGGER;
     public static String VERSION;
     public static boolean PluginDisabled = false;
-    public static boolean DeveloperModeEnabled = false;
+    public static boolean DeveloperModeEnabled = true;
     private static CmbMinigames plugin;
 
     public static CmbMinigames getPlugin() {
