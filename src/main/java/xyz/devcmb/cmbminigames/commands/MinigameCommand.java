@@ -23,7 +23,24 @@ public class MinigameCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length != 2){
+        if(args.length == 1){
+            Minigame m = MinigameController.getById(args[0].toLowerCase());
+            if(m == null){
+                commandSender.sendMessage(ChatColor.RED + "Invalid minigame");
+                return true;
+            }
+
+            commandSender.sendMessage(ChatColor.GREEN +
+                    m.getName() + "\n"
+                    + ChatColor.WHITE + m.getDescription()
+                    + ChatColor.BLUE + "\nv" + m.getVersion() + "\n"
+                    + (MinigameController.isMinigameActive(m.getId()) ? "Active" : "Inactive")
+            );
+
+            return true;
+        }
+
+        if(args.length < 2){
             commandSender.sendMessage(ChatColor.RED + "Invalid arguments. Usage: /minigame <game> <action>");
             return true;
         }
@@ -39,6 +56,7 @@ public class MinigameCommand implements CommandExecutor {
             for(Minigame minigame : MinigameController.MINIGAMES){
                 if(minigame.getId().equals(args[0].toLowerCase())){
                     found = true;
+                    break;
                 }
             }
 
