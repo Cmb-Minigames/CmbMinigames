@@ -12,3 +12,4 @@ There are minigames that aren't yet implemented, but are planned for the future
 - Team Tower Spleef - A 2-team game where you need to fill in a layer of snow with your teams color wool, and kill players by using snowballs and diamond shovels to knock them off the playing field. 5 layers, and whichever team claims the most layers, wins.
 - Raining Bombs (sounds familliar, iykyk) - A minigame where you have to dodge TNT that fall from the sky. Every once in a while, you'll be given a fireball to shoot at the other players. Last one standing wins.
 - Delivery - Get some kind of food item and locate an NPC to give it to. Whoever has the most after 5 minutes wins
+- Minefield - A 2-team game where one team navigates through a maze with glowing, while the other team tries to blow them up with TNT. There will be 2 rounds, one for each team, 30 seconds each, and whoever has the most escaped players wins

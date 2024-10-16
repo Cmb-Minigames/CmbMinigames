@@ -44,5 +44,6 @@ public class BlockShuffleListeners implements Listener {
 
         bsc.AlivePlayers.remove(event.getPlayer());
         bsc.SuccessfulPlayers.remove(event.getPlayer());
+        if(bsc.AlivePlayers.isEmpty()) MinigameController.endMinigame(null, "blockshuffle", true);
     }
 }
