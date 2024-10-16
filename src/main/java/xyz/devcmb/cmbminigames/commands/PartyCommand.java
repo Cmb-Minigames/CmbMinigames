@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import xyz.devcmb.cmbminigames.menus.PartyMenu;
 
 public class PartyCommand implements CommandExecutor {
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if(sender instanceof Player player) {
