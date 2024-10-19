@@ -1,4 +1,4 @@
-![CmbMinigamesBanner.png](docs%2Fimages%2FCmbMinigamesBanner.png)
+![CmbMinigamesBanner.png](https://github.com/29cmb/CmbMinigames/blob/master/docs/images/CmbMinigamesBanner.png?raw=true)
 
 # Cmb Minigames
 *An open source minecraft minigames plugin, including a party system**
