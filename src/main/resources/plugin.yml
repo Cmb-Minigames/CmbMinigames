@@ -1,10 +1,10 @@
 name: cmbminigames
-version: '0.2'
+version: '0.2.1'
 main: xyz.devcmb.cmbminigames.CmbMinigames
 api-version: '1.21'
 prefix: CmbMinigames
 authors: [ DevCmb ]
-description: An open-source minigame server plugin, inspired by Blockwars and MCCI
+description: An open-source minigame server plugin, inspired by Blockwars and MCC
 website: devcmb.xyz
 database: true
 commands:

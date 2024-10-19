@@ -132,7 +132,7 @@ public class BlockBingoListeners implements Listener {
             if (board == null) return;
 
             Material block = event.getCurrentItem().getType();
-            if (board.containsKey(block)) {
+            if (board.containsKey(block) && !board.get(block)) {
                 board.put(block, true);
                 player.sendMessage(ChatColor.YELLOW + "You have found a " + ChatColor.BOLD + Utilities.getDisplayName(block) + "!");
 

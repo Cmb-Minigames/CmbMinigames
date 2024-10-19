@@ -74,6 +74,14 @@ public class BlockBingoBlocks {
         Material.BONE_BLOCK,
         Material.JACK_O_LANTERN,
         Material.CARVED_PUMPKIN,
+        Material.MAGMA_BLOCK,
+        Material.PRISMARINE,
+        Material.NETHERRACK,
+        Material.BLACKSTONE,
+        Material.SPONGE,
+        Material.COBWEB,
+        Material.DRIPSTONE_BLOCK,
+        Material.MUD,
         // Workstations
         Material.CRAFTING_TABLE,
         Material.FURNACE,
@@ -81,6 +89,8 @@ public class BlockBingoBlocks {
         Material.CRAFTER,
         Material.SMOKER,
         Material.BREWING_STAND,
+        Material.STONECUTTER,
+        Material.LOOM,
         Material.ANVIL,
         Material.GRINDSTONE,
         Material.COMPOSTER,
@@ -103,6 +113,26 @@ public class BlockBingoBlocks {
         Material.DROPPER,
         Material.HOPPER,
         Material.PISTON,
-        Material.STICKY_PISTON
+        Material.STICKY_PISTON,
+        // Foodstuffs
+        Material.CAKE,
+        Material.MELON,
+        Material.PUMPKIN,
+        Material.DRIED_KELP_BLOCK,
+        Material.HONEY_BLOCK,
+        Material.HONEYCOMB_BLOCK,
+        // Plants
+        Material.OAK_SAPLING,
+        Material.BIRCH_SAPLING,
+        Material.SPRUCE_SAPLING,
+        Material.JUNGLE_SAPLING,
+        Material.ACACIA_SAPLING,
+        Material.DARK_OAK_SAPLING,
+        Material.OAK_LEAVES,
+        Material.BIRCH_LEAVES,
+        Material.SPRUCE_LEAVES,
+        Material.JUNGLE_LEAVES,
+        Material.ACACIA_LEAVES,
+        Material.DARK_OAK_LEAVES
     };
 }
