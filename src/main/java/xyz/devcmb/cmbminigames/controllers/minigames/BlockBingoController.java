@@ -41,6 +41,7 @@ public class BlockBingoController implements Minigame {
 
     @Override
     public void activateGame(Player player, Boolean automaticTrigger) {
+        Utilities.AnnounceMinigame(this);
         for(Player p : Bukkit.getOnlinePlayers()){
             playerJoin(p);
         }
