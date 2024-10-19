@@ -3,7 +3,7 @@ package xyz.devcmb.cmbminigames.misc;
 import org.bukkit.Material;
 
 public class BlockShuffleBlocks {
-    public static Material[] Blocks = new Material[]{
+    public static final Material[] Blocks = new Material[]{
         Material.OAK_LOG,
         Material.OAK_WOOD,
         Material.STRIPPED_OAK_LOG,

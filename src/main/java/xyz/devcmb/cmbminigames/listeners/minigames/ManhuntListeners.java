@@ -1,9 +1,6 @@
 package xyz.devcmb.cmbminigames.listeners.minigames;
 
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -74,10 +71,30 @@ public class ManhuntListeners implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        if(MinigameController.isMinigameActive("manhunt") && !MinigameController.isMinigameBeingPlayed("manhunt")){
+            player.sendMessage(ChatColor.RED + "Manhunt is currently active, but has not started yet, type /hunter or /runner to join the game!");
+            return;
+        }
+
         if(!MinigameController.isMinigameBeingPlayed("manhunt")) return;
         ManhuntController mhc = (ManhuntController) MinigameController.getById("manhunt");
 
         mhc.Hunters.add(player);
+        player.setGameMode(GameMode.SURVIVAL);
+        player.getInventory().clear();
+
+        ItemStack compass = new ItemStack(Material.COMPASS);
+        ItemMeta meta = compass.getItemMeta();
+        if (meta != null) {
+            meta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            compass.setItemMeta(meta);
+        }
+
+        player.getInventory().addItem(compass);
+        player.sendMessage(ChatColor.GREEN + "You joined in the midst of a manhunt game, and you have been spawned in as a hunter");
+        player.teleport(player.getWorld().getSpawnLocation());
     }
 
     @EventHandler

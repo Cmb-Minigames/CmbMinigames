@@ -70,6 +70,7 @@ public class BlockShuffleController implements Minigame {
                 for(Player p : AlivePlayers){
                     p.teleport(p.getWorld().getSpawnLocation());
                     p.setGameMode(GameMode.SURVIVAL);
+                    p.getInventory().clear();
                     AssignBlocks(p);
                 }
 
@@ -153,6 +154,7 @@ public class BlockShuffleController implements Minigame {
             Bukkit.broadcastMessage(ChatColor.RED + "All active players have left the game, so there is no winner");
         } else if(AlivePlayers.size() == 1){
             Player winner = AlivePlayers.getFirst();
+            winner.sendTitle(ChatColor.GOLD + "VICTORY", null, 5, 60, 5);
             Bukkit.broadcastMessage(ChatColor.GREEN + winner.getName() + " has won the game!");
         } else {
             Bukkit.broadcastMessage(ChatColor.RED + "The game has been ended early, and there are no winners :(");

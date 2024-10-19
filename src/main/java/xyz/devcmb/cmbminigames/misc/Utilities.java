@@ -52,4 +52,15 @@ public class Utilities {
         int randomIndex = random.nextInt(blocks.length);
         return blocks[randomIndex];
     }
+
+    public static String getDisplayName(Material material) {
+        String[] words = material.name().toLowerCase().split("_");
+        StringBuilder displayName = new StringBuilder();
+        for (String word : words) {
+            displayName.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1))
+                    .append(" ");
+        }
+        return displayName.toString().trim();
+    }
 }

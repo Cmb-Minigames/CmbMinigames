@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import xyz.devcmb.cmbminigames.CmbMinigames;
+import xyz.devcmb.cmbminigames.controllers.minigames.BlockBingoController;
 import xyz.devcmb.cmbminigames.controllers.minigames.BlockShuffleController;
 import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
 import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
@@ -39,10 +40,11 @@ public class MinigameController {
     public static void registerAllMinigames(){
         registerMinigame(new ManhuntController());
         registerMinigame(new BlockShuffleController());
+        registerMinigame(new BlockBingoController());
     }
 
     public static void activateMinigame(Player executor, String id, Boolean automaticTrigger){
-        Minigame minigame = MINIGAMES.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        Minigame minigame = getById(id);
         if(minigame == null) return;
 
         if(ActiveMinigame == minigame){
@@ -64,7 +66,7 @@ public class MinigameController {
     }
 
     public static void deactivateMinigame(Player executor, String id, Boolean automaticTrigger){
-        Minigame minigame = MINIGAMES.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        Minigame minigame = getById(id);
         if(minigame == null) return;
 
         if(ActiveMinigame != minigame){
@@ -83,11 +85,16 @@ public class MinigameController {
     }
 
     public static void startMinigame(Player executor, String id, Boolean automaticTrigger){
-        Minigame minigame = MINIGAMES.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        Minigame minigame = getById(id);
         if(minigame == null) return;
 
         if(ActiveMinigame != minigame){
             if(!automaticTrigger) executor.sendMessage(ChatColor.RED + "You must activate the minigame before starting it");
+            return;
+        }
+
+        if(PlayingMinigame == minigame){
+            if(!automaticTrigger) executor.sendMessage(ChatColor.RED + "This minigame is already being played!");
             return;
         }
 
@@ -96,7 +103,7 @@ public class MinigameController {
     }
 
     public static void endMinigame(Player executor, String id, Boolean automaticTrigger){
-        Minigame minigame = MINIGAMES.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        Minigame minigame = getById(id);
         if(minigame == null) return;
 
         if(PlayingMinigame != minigame){
@@ -111,7 +118,7 @@ public class MinigameController {
     }
 
     public static void resetMinigame(Player executor, String id, Boolean automaticTrigger){
-        Minigame minigame = MINIGAMES.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
+        Minigame minigame = getById(id);
         if(minigame == null) return;
 
         if(ActiveMinigame != minigame){

@@ -17,7 +17,7 @@ public final class CmbMinigames extends JavaPlugin {
     public static Logger LOGGER;
     public static String VERSION;
     public static boolean PluginDisabled = false;
-    public static boolean DeveloperModeEnabled = true;
+    public static final boolean DeveloperModeEnabled = true;
     private static CmbMinigames plugin;
 
     public static CmbMinigames getPlugin() {
@@ -52,6 +52,7 @@ public final class CmbMinigames extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()){
             PartyController.onLeave(new PlayerQuitEvent(player, "Server closed"));
         }
+
         LOGGER.info("Cmb Minigames has been murdered");
     }
 }

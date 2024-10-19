@@ -91,23 +91,30 @@ public class ManhuntController implements Minigame {
         CmbMinigames.LOGGER.info("Runners: " + Runners + " | Hunters: " + Hunters);
 
         for(Player runner : Runners) {
-            Utilities.Countdown(runner, 10);
-            runner.setGameMode(GameMode.SPECTATOR);
-            runner.getInventory().clear();
+            if(runner != null && runner.isOnline()){
+                Utilities.Countdown(runner, 10);
+                runner.setGameMode(GameMode.SPECTATOR);
+                runner.getInventory().clear();
+            }
         }
         for(Player hunter : Hunters){
-            Utilities.Countdown(hunter, 10);
-            hunter.setGameMode(GameMode.SPECTATOR);
-            hunter.getInventory().clear();
+            if (hunter != null && hunter.isOnline()) {
+                Utilities.Countdown(hunter, 10);
+                hunter.setGameMode(GameMode.SPECTATOR);
+                hunter.getInventory().clear();
+            }
         }
 
         new BukkitRunnable(){
             @Override
             public void run() {
                 for(Player runner : Runners) {
-                    AliveRunners.add(runner);
-                    runner.teleport(runner.getWorld().getSpawnLocation());
-                    runner.setGameMode(GameMode.SURVIVAL);
+                    if(runner != null && runner.isOnline()){
+                        AliveRunners.add(runner);
+                        runner.teleport(runner.getWorld().getSpawnLocation());
+                        runner.setGameMode(GameMode.SURVIVAL);
+                        runner.getInventory().clear();
+                    }
                 }
 
                 new BukkitRunnable(){
@@ -119,6 +126,8 @@ public class ManhuntController implements Minigame {
                             if (hunter != null && hunter.isOnline()) {
                                 hunter.teleport(hunter.getWorld().getSpawnLocation());
                                 hunter.setGameMode(GameMode.SURVIVAL);
+                                hunter.getInventory().clear();
+
                                 ItemStack compass = new ItemStack(Material.COMPASS);
                                 ItemMeta meta = compass.getItemMeta();
                                 if (meta != null) {
