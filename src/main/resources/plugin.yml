@@ -1,5 +1,5 @@
 name: cmbminigames
-version: '0.2.1'
+version: '0.3'
 main: xyz.devcmb.cmbminigames.CmbMinigames
 api-version: '1.21'
 prefix: CmbMinigames

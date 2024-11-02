@@ -2,10 +2,10 @@ package xyz.devcmb.cmbminigames.controllers.minigames;
 import org.bukkit.entity.Player;
 
 public interface Minigame {
-    String getId();
-    String getName();
-    String getDescription();
-    String getVersion();
+    default String getId(){ return "minigame"; }
+    default String getName(){ return "Minigame"; }
+    default String getDescription(){ return "This is where we make the minigame"; }
+    default String getVersion(){ return "0.0"; }
 
     void activateGame(Player player, Boolean automaticTrigger);
     void deactivateGame(Player player, Boolean automaticTrigger);

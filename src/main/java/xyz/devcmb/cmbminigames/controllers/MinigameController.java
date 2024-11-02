@@ -5,10 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import xyz.devcmb.cmbminigames.CmbMinigames;
-import xyz.devcmb.cmbminigames.controllers.minigames.BlockBingoController;
-import xyz.devcmb.cmbminigames.controllers.minigames.BlockShuffleController;
-import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
-import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
+import xyz.devcmb.cmbminigames.controllers.minigames.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +38,7 @@ public class MinigameController {
         registerMinigame(new ManhuntController());
         registerMinigame(new BlockShuffleController());
         registerMinigame(new BlockBingoController());
+        registerMinigame(new BrawlController());
     }
 
     public static void activateMinigame(Player executor, String id, Boolean automaticTrigger){
