@@ -1,28 +1,12 @@
 name: cmbminigames
-version: '0.3'
+version: '1.0'
 main: xyz.devcmb.cmbminigames.CmbMinigames
 api-version: '1.21'
 prefix: CmbMinigames
 authors: [ DevCmb ]
-description: An open-source minigame server plugin, inspired by Blockwars and MCC
+description: A small, open-source minigame system for minecraft servers.
 website: devcmb.xyz
 database: true
-commands:
-  cm:
-    description: "View the version for Cmb Minigames"
-    usage: /<command>
-#  party:
-#    description: "View your party"
-#    usage: /<command>
-  minigame:
-    description: "Manage a minigame"
-    usage: /<command> [name] [start|end|activate|deactivate]
-  hunter:
-    description: "Register as a hunter for manhunt"
-    usage: /<command>
-  runner:
-    description: "Register as a runner for manhunt"
-    usage: /<command>
 permissions:
   cmbminigames.manager:
     description: "Allows permission to run any minigame"
