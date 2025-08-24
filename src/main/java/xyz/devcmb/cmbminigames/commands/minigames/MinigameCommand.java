@@ -16,7 +16,7 @@ public class MinigameCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
         if(args.length == 0 || !subcommands.contains(args[0].toLowerCase())) {
-            commandSender.sendMessage(Format.format("Invalid usage: /minigame <" + String.join("|", subcommands) + ">", Format.FormatType.INVALID));
+            commandSender.sendMessage(Format.format("Invalid usage: /minigame <" + String.join(" | ", subcommands) + ">", Format.FormatType.INVALID));
             return true;
         }
 
@@ -28,7 +28,7 @@ public class MinigameCommand implements CommandExecutor {
                 }
 
                 if(args.length < 2) {
-                    commandSender.sendMessage(Format.format("Invalid usage: /minigame start <" + String.join("|", MinigameController.getMinigames().keySet()) + ">", Format.FormatType.INVALID));
+                    commandSender.sendMessage(Format.format("Invalid usage: /minigame start <" + String.join(" | ", MinigameController.getMinigames().keySet()) + ">", Format.FormatType.INVALID));
                     return true;
                 }
 
@@ -45,7 +45,9 @@ public class MinigameCommand implements CommandExecutor {
                     return true;
                 }
 
+                commandSender.sendMessage(Format.format("Sent signal for minigame start!", Format.FormatType.SUCCESS));
                 MinigameController.startMinigame(minigameName);
+                return true;
             case "end":
                 Minigame activeMinigame = MinigameController.getActiveMinigame();
                 if(activeMinigame == null) {
@@ -58,7 +60,9 @@ public class MinigameCommand implements CommandExecutor {
                     return true;
                 }
 
+                commandSender.sendMessage(Format.format("Sent signal for minigame end!", Format.FormatType.SUCCESS));
                 MinigameController.stopMinigame();
+                return true;
             case "list":
                 // TODO
             default:

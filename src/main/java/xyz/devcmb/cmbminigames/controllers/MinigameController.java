@@ -1,6 +1,11 @@
 package xyz.devcmb.cmbminigames.controllers;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
@@ -34,8 +39,27 @@ public class MinigameController {
         if(minigame == null) return;
 
         minigame.setActive(true);
-        minigame.start();
         activeMinigame = minigame;
+
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            Title minigameTitle = Title.title(
+                    Component.text(minigame.getName()).decorate(TextDecoration.BOLD).color(NamedTextColor.YELLOW),
+                    Component.text("A minigame is starting!")
+            );
+
+            player.showTitle(minigameTitle);
+        }
+
+        Bukkit.broadcast(
+            Component.text("_______________________________________")
+                    .append(Component.newline())
+                    .append(Component.newline())
+                    .append(minigame.getHowToPlay())
+                    .append(Component.newline())
+                    .append(Component.text("_______________________________________"))
+        );
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), minigame::start, 20 * 5);
     }
 
     public static void stopMinigame(){
@@ -43,6 +67,7 @@ public class MinigameController {
 
         activeMinigame.setActive(false);
         activeMinigame.end();
+        activeMinigame = null;
     }
 
     private static void registerMinigame(Minigame minigame) {
