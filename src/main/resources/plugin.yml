@@ -11,3 +11,7 @@ permissions:
   cmbminigames.manager:
     description: "Allows permission to run any minigame"
     default: op
+commands:
+  minigame:
+    description: Interface with the minigames from CmbMinigames
+    usage: /<command>

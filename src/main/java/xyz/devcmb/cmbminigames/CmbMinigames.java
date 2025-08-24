@@ -1,6 +1,9 @@
 package xyz.devcmb.cmbminigames;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.devcmb.cmbminigames.commands.RegisterCommands;
+import xyz.devcmb.cmbminigames.controllers.MinigameController;
+
 import java.util.logging.Logger;
 
 public final class CmbMinigames extends JavaPlugin {
@@ -16,6 +19,9 @@ public final class CmbMinigames extends JavaPlugin {
     public void onEnable() {
         LOGGER = getLogger();
         plugin = this;
+
+        MinigameController.RegisterAllMinigames();
+        RegisterCommands.RegisterAllCommands();
 
         LOGGER.info("Cmb Minigames has awoken");
     }
