@@ -5,12 +5,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Random;
 
 public class Helpers {
     public static void Countdown(List<Player> players, int length, Component subtitle, Runnable callback) {
@@ -77,5 +79,30 @@ public class Helpers {
                 timer--;
             }
         }.runTaskTimer(CmbMinigames.getPlugin(), 0, 20);
+    }
+
+    public static <T> T getRandom(List<T> list) throws IllegalArgumentException {
+        if(list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("Cannot find a random value of an empty or nonexistent list.");
+        }
+
+        return list.get(new Random().nextInt(list.size()));
+    }
+
+    public static String materialToDisplayName(Material material) {
+        String[] parts = material.name().split("_");
+        StringBuilder displayName = new StringBuilder();
+        for (String part : parts) {
+            if (!displayName.isEmpty()) displayName.append(" ");
+            displayName.append(part.substring(0, 1).toUpperCase())
+                    .append(part.substring(1).toLowerCase());
+        }
+        return displayName.toString();
+    }
+
+    public static String formatTime(int totalSeconds) {
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        return String.format("%d:%02d", minutes, seconds);
     }
 }
