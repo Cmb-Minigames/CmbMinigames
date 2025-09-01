@@ -1,5 +1,10 @@
-database:
-  # MONGO DB
-  uri: ""
-  databaseName: ""
-  partyCollection: ""
+minigames:
+  blockshuffle:
+    # If this is true, keep inventory will be enabled and then reset to its previous state when the minigame ends.
+    useKeepInventory: false
+
+    # The worlds you will be playing on (required for the option above)
+    worlds:
+      - "world"
+      - "world_nether"
+      - "world_the_end"

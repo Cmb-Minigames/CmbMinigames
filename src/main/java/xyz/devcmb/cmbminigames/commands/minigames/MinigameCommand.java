@@ -46,7 +46,7 @@ public class MinigameCommand implements CommandExecutor {
                 }
 
                 commandSender.sendMessage(Format.format("Sent signal for minigame start!", Format.FormatType.SUCCESS));
-                MinigameController.startMinigame(minigameName);
+                MinigameController.startMinigame(commandSender, minigameName);
                 return true;
             case "end":
                 Minigame activeMinigame = MinigameController.getActiveMinigame();

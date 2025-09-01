@@ -3,13 +3,15 @@ package xyz.devcmb.cmbminigames.controllers.minigames;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import net.kyori.adventure.title.Title;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.Constants;
 import xyz.devcmb.cmbminigames.controllers.MinigameController;
 import xyz.devcmb.cmbminigames.util.Helpers;
@@ -19,13 +21,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BlockShuffleController implements Minigame {
     public boolean isActive = false;
 
     private final Map<Player, Material> blocks = new HashMap<>();
-    private final List<Player> players = new ArrayList<>();
+
+    private final List<Player> participants = new ArrayList<>();
+    private final List<Player> aliveParticipants = new ArrayList<>();
+
     private final List<Player> qualifiers = new ArrayList<>();
+    private final List<Player> waitingPlayers = new ArrayList<>();
+
+    private final Map<String, Boolean> keepInventoryDefaults = new HashMap<>();
 
     @Override
     public String getId() {
@@ -35,6 +44,11 @@ public class BlockShuffleController implements Minigame {
     @Override
     public String getName() {
         return "Block Shuffle";
+    }
+
+    @Override
+    public Integer minimumPlayers() {
+        return 2;
     }
 
     @Override
@@ -60,13 +74,39 @@ public class BlockShuffleController implements Minigame {
 
     @Override
     public void start() {
-        players.clear();
+        keepInventoryDefaults.clear();
+
+        boolean useKeepInventory = CmbMinigames.getPlugin().getConfig()
+                .getBoolean("minigames.blockshuffle.useKeepInventory");
+
+        @SuppressWarnings("unchecked")
+        List<String> playWorlds = (List<String>) CmbMinigames.getPlugin().getConfig()
+                .getList("minigames.blockshuffle.worlds");
+
+        if(useKeepInventory) {
+            assert playWorlds != null;
+            playWorlds.forEach(world -> {
+                World registeredWorld = Bukkit.getWorld(world);
+                if(registeredWorld == null) {
+                    CmbMinigames.LOGGER.warning("World " + world + " not found! Error in minigames.blockshuffle.worlds config!");
+                    return;
+                }
+
+                keepInventoryDefaults.put(world, registeredWorld.getGameRuleValue(GameRule.KEEP_INVENTORY));
+                registeredWorld.setGameRule(GameRule.KEEP_INVENTORY, true);
+            });
+        }
+
+        aliveParticipants.clear();
+        participants.clear();
         qualifiers.clear();
+        blocks.clear();
 
-        players.addAll(Bukkit.getOnlinePlayers());
-        qualifiers.addAll(players);
+        participants.addAll(Bukkit.getOnlinePlayers());
+        aliveParticipants.addAll(participants);
+        qualifiers.addAll(participants);
 
-        Helpers.Countdown(players, 10, Component.text("The game is about to begin!"), this::Game);
+        Helpers.Countdown(participants, 10, Component.text("The game is about to begin!"), this::Game);
     }
 
     private void Game() {
@@ -85,17 +125,13 @@ public class BlockShuffleController implements Minigame {
         });
 
         qualifiers.clear();
-        Timer.CreateTimer("blockshuffle_timer", 60 * 5, (timeLeft) -> {
-            blocks.keySet().removeIf(player -> !player.isOnline());
-            players.removeIf(player -> !player.isOnline());
-            qualifiers.removeIf(player -> !player.isOnline());
-
-            if(players.isEmpty()) {
+        Timer.CreateTimer("blockshuffle_timer", Constants.BlockShuffleTimer, (timeLeft) -> {
+            if(participants.isEmpty()) {
                 MinigameController.stopMinigame();
                 return;
             }
 
-            players.forEach(player -> player.sendActionBar(
+            participants.forEach(player -> player.sendActionBar(
                     Component.text(Helpers.formatTime(timeLeft))
                             .color(qualifiers.contains(player) ? NamedTextColor.GREEN : NamedTextColor.YELLOW)
                             .decorate(TextDecoration.BOLD)
@@ -104,26 +140,28 @@ public class BlockShuffleController implements Minigame {
             if(!isActive) return;
 
             if(qualifiers.isEmpty()) {
-                // TODO: Test this
                 Bukkit.broadcast(
                         Component.text("No one found their block, so another round will be played!")
                                 .color(NamedTextColor.YELLOW)
                 );
 
+                qualifiers.addAll(aliveParticipants);
                 Game();
                 return;
             }
 
+            AtomicBoolean eliminatedPlayers = new AtomicBoolean(false);
             if(!blocks.isEmpty()) {
-                // TODO: Test this
                 blocks.keySet().forEach(player -> {
-                    players.remove(player);
+                    aliveParticipants.remove(player);
                     player.setGameMode(GameMode.SPECTATOR);
                     player.sendMessage(
                             Component.text("You have been ")
                                     .append(Component.text("ELIMINATED").decorate(TextDecoration.BOLD))
                                     .color(NamedTextColor.RED)
                     );
+
+                    eliminatedPlayers.set(true);
 
                     Bukkit.broadcast(
                             Component.text(
@@ -134,12 +172,48 @@ public class BlockShuffleController implements Minigame {
             }
 
             if(qualifiers.size() == 1 && !Constants.IsDevelopment) {
-                // TODO
-                MinigameController.stopMinigame();
+                participants.forEach(player -> {
+                    if(player.equals(qualifiers.getFirst())) {
+                        Title title = Title.title(
+                                Component.text("VICTORY").decorate(TextDecoration.BOLD).color(NamedTextColor.GOLD),
+                                Component.text("You will be placed into survival in 5 seconds")
+                        );
+
+                        player.showTitle(title);
+                    } else {
+                        Title title = Title.title(
+                                Component.text("DEFEAT").decorate(TextDecoration.BOLD).color(NamedTextColor.RED),
+                                Component.text("You will be placed into survival in 5 seconds")
+                        );
+
+                        player.showTitle(title);
+                    }
+
+                    player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+                });
+
+                waitingPlayers.forEach(player -> {
+                    Title title = Title.title(
+                            Component.text("GAME OVER").decorate(TextDecoration.BOLD).color(NamedTextColor.AQUA),
+                            Component.text("You will be placed into survival in 5 seconds")
+                    );
+
+                    player.showTitle(title);
+                });
+
+                Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
+                    // I did a really fun thought experiment when making this, I hope you can tell
+                    if(!isActive) return;
+
+                    participants.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
+                    waitingPlayers.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
+                    MinigameController.stopMinigame();
+                }, 5 * 20);
+
                 return;
             }
 
-            if(qualifiers.size() == players.size()) {
+            if(qualifiers.size() == aliveParticipants.size() && !eliminatedPlayers.get()) {
                 Bukkit.broadcast(
                         Component.text("Everyone has found their block in time! Continuing...").color(NamedTextColor.YELLOW)
                 );
@@ -153,7 +227,18 @@ public class BlockShuffleController implements Minigame {
     public void end() {
         blocks.clear();
         qualifiers.clear();
-        players.clear();
+        participants.clear();
+        aliveParticipants.clear();
+
+        keepInventoryDefaults.forEach((world, def) -> {
+            World registeredWorld = Bukkit.getWorld(world);
+            if(registeredWorld != null) {
+                registeredWorld.setGameRule(GameRule.KEEP_INVENTORY, def);
+            }
+        });
+
+        keepInventoryDefaults.clear();
+        waitingPlayers.clear();
     }
 
     @EventHandler
@@ -174,6 +259,37 @@ public class BlockShuffleController implements Minigame {
         }
     }
 
+    @EventHandler
+    public void playerLeft(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        if(!isActive || !blocks.containsKey(player)) return;
+
+        if(player.getGameMode().equals(GameMode.SPECTATOR)) {
+            player.setGameMode(GameMode.SURVIVAL);
+        }
+
+        blocks.remove(player);
+        participants.remove(player);
+        aliveParticipants.remove(player);
+        qualifiers.remove(player);
+        waitingPlayers.remove(player);
+    }
+
+    @EventHandler
+    public void playerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if(!isActive) return;
+
+        player.setGameMode(GameMode.SPECTATOR);
+        waitingPlayers.add(player);
+
+        player.sendMessage(
+                Component.text("A game of ")
+                        .append(Component.text("Block Shuffle").decorate(TextDecoration.BOLD))
+                        .append(Component.text(" is currently active. You will exit spectator once the game ends."))
+                        .color(NamedTextColor.GREEN)
+        );
+    }
 
     @Override
     public void setActive(boolean active) {

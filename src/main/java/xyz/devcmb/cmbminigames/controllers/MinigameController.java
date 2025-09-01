@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -32,11 +33,16 @@ public class MinigameController {
         registerMinigame(new BlockShuffleController());
     }
 
-    public static void startMinigame(String id){
+    public static void startMinigame(CommandSender starter, String id){
         if(activeMinigame != null) return;
 
         Minigame minigame = minigames.get(id);
         if(minigame == null) return;
+
+        if(Bukkit.getOnlinePlayers().size() < minigame.minimumPlayers()) {
+            starter.sendMessage(Component.text("At least " + minigame.minimumPlayers() + " players are required to play this minigame!").color(NamedTextColor.RED));
+            return;
+        }
 
         minigame.setActive(true);
         activeMinigame = minigame;

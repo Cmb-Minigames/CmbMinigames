@@ -20,6 +20,8 @@ public final class CmbMinigames extends JavaPlugin {
         LOGGER = getLogger();
         plugin = this;
 
+        saveDefaultConfig();
+
         MinigameController.RegisterAllMinigames();
         RegisterCommands.RegisterAllCommands();
 
@@ -29,5 +31,9 @@ public final class CmbMinigames extends JavaPlugin {
     @Override
     public void onDisable() {
         LOGGER.info("Cmb Minigames has been murdered");
+
+        if(MinigameController.getActiveMinigame() != null) {
+            MinigameController.stopMinigame();
+        }
     }
 }
