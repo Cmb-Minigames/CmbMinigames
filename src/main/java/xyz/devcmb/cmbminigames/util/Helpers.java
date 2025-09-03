@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmbminigames.CmbMinigames;
@@ -13,9 +14,10 @@ import xyz.devcmb.cmbminigames.CmbMinigames;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BooleanSupplier;
 
 public class Helpers {
-    public static void Countdown(List<Player> players, int length, Component subtitle, Runnable callback) {
+    public static void Countdown(List<Player> players, int length, Component subtitle, Runnable callback, BooleanSupplier cancel) {
         new BukkitRunnable() {
             int timer = length;
 
@@ -24,6 +26,12 @@ public class Helpers {
                 if (timer == 0) {
                     callback.run();
                     this.cancel();
+                    return;
+                }
+
+                if(cancel.getAsBoolean()) {
+                    this.cancel();
+                    return;
                 }
 
                 players.forEach(player -> {
@@ -104,5 +112,22 @@ public class Helpers {
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
         return String.format("%d:%02d", minutes, seconds);
+    }
+
+    public static void GameEndAnnouncement(Player player, GameEndStatus status, Component subtitle) {
+        Title title = Title.title(status.Title, subtitle);
+        player.showTitle(title);
+        player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+    }
+
+    public enum GameEndStatus {
+        VICTORY(Component.text("VICTORY").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD)),
+        DEFEAT(Component.text("DEFEAT").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)),
+        NO_PARTICIPATION(Component.text("GAME OVER").decorate(TextDecoration.BOLD).color(NamedTextColor.AQUA));
+
+        final Component Title;
+        GameEndStatus(Component title) {
+            Title = title;
+        }
     }
 }

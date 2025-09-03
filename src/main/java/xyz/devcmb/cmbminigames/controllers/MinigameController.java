@@ -11,7 +11,9 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import xyz.devcmb.cmbminigames.CmbMinigames;
+import xyz.devcmb.cmbminigames.Constants;
 import xyz.devcmb.cmbminigames.controllers.minigames.BlockShuffleController;
+import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
 import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
 
 import java.util.HashMap;
@@ -31,6 +33,7 @@ public class MinigameController {
 
     public static void RegisterAllMinigames() {
         registerMinigame(new BlockShuffleController());
+        registerMinigame(new ManhuntController());
     }
 
     public static void startMinigame(CommandSender starter, String id){
@@ -39,7 +42,7 @@ public class MinigameController {
         Minigame minigame = minigames.get(id);
         if(minigame == null) return;
 
-        if(Bukkit.getOnlinePlayers().size() < minigame.minimumPlayers()) {
+        if(Bukkit.getOnlinePlayers().size() < minigame.minimumPlayers() && !Constants.IsDevelopment) {
             starter.sendMessage(Component.text("At least " + minigame.minimumPlayers() + " players are required to play this minigame!").color(NamedTextColor.RED));
             return;
         }
@@ -84,5 +87,15 @@ public class MinigameController {
         PluginManager pm = Bukkit.getPluginManager();
         pm.addPermission(permission);
         pm.registerEvents(minigame, CmbMinigames.getPlugin());
+    }
+
+    public static Minigame getMinigame(String id) {
+        for(Minigame minigame : minigames.values()) {
+            if(minigame.getId().equals(id)) {
+                return minigame;
+            }
+        }
+
+        return null;
     }
 }

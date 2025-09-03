@@ -32,6 +32,10 @@ tasks {
     }
 }
 
+tasks.named("runServer") {
+    dependsOn("build")
+}
+
 dependencies {
     implementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     implementation 'org.mongodb:mongodb-driver-sync:4.11.0'

@@ -3,7 +3,6 @@ package xyz.devcmb.cmbminigames.controllers.minigames;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -106,10 +105,12 @@ public class BlockShuffleController implements Minigame {
         aliveParticipants.addAll(participants);
         qualifiers.addAll(participants);
 
-        Helpers.Countdown(participants, 10, Component.text("The game is about to begin!"), this::Game);
+        Helpers.Countdown(participants, 10, Component.text("The game is about to begin!"), this::Game, () -> !isActive);
     }
 
     private void Game() {
+        if(!isActive) return;
+
         blocks.clear();
         qualifiers.forEach(player -> {
             if(!player.isOnline()) return;
@@ -172,34 +173,17 @@ public class BlockShuffleController implements Minigame {
             }
 
             if(qualifiers.size() == 1 && !Constants.IsDevelopment) {
-                participants.forEach(player -> {
-                    if(player.equals(qualifiers.getFirst())) {
-                        Title title = Title.title(
-                                Component.text("VICTORY").decorate(TextDecoration.BOLD).color(NamedTextColor.GOLD),
-                                Component.text("You will be placed into survival in 5 seconds")
-                        );
+                participants.forEach(player -> Helpers.GameEndAnnouncement(
+                        player,
+                        player.equals(qualifiers.getFirst()) ? Helpers.GameEndStatus.VICTORY : Helpers.GameEndStatus.DEFEAT,
+                        Component.text("You will be placed into survival in 5 seconds")
+                ));
 
-                        player.showTitle(title);
-                    } else {
-                        Title title = Title.title(
-                                Component.text("DEFEAT").decorate(TextDecoration.BOLD).color(NamedTextColor.RED),
-                                Component.text("You will be placed into survival in 5 seconds")
-                        );
-
-                        player.showTitle(title);
-                    }
-
-                    player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
-                });
-
-                waitingPlayers.forEach(player -> {
-                    Title title = Title.title(
-                            Component.text("GAME OVER").decorate(TextDecoration.BOLD).color(NamedTextColor.AQUA),
-                            Component.text("You will be placed into survival in 5 seconds")
-                    );
-
-                    player.showTitle(title);
-                });
+                waitingPlayers.forEach(player -> Helpers.GameEndAnnouncement(
+                        player,
+                        Helpers.GameEndStatus.NO_PARTICIPATION,
+                        Component.text("You will be placed into survival in 5 seconds"))
+                );
 
                 Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
                     // I did a really fun thought experiment when making this, I hope you can tell
