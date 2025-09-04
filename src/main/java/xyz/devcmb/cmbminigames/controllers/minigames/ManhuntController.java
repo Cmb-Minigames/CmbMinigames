@@ -5,15 +5,27 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.Constants;
 import xyz.devcmb.cmbminigames.controllers.MinigameController;
 import xyz.devcmb.cmbminigames.util.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * TODO list
+ * - Allow role assignment through a command (/runner and /hunter)
+ * - Make the game end when any runner makes it to the end fountain
+ * - Give a better team indication
+ * - Handle midgame join
+ * - TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+ * - Fix the 10k bugs I find during testing
+ */
 
 public class ManhuntController implements Minigame {
     private boolean isActive = false;
@@ -66,8 +78,25 @@ public class ManhuntController implements Minigame {
 
     @Override
     public void start() {
+        String worldName = CmbMinigames.getPlugin().getConfig()
+                .getString("minigames.manhunt.play_world");
+
+        if(worldName == null) {
+            Bukkit.broadcast(Component.text("Could not start manhunt: minigames.manhunt.play_world is not provided").color(NamedTextColor.RED));
+            MinigameController.stopMinigame();
+            return;
+        }
+
+        World world = Bukkit.getWorld(worldName);
+        if(world == null) {
+            Bukkit.broadcast(Component.text("Could not start manhunt: minigames.manhunt.play_world is not a valid world name").color(NamedTextColor.RED));
+            MinigameController.stopMinigame();
+            return;
+        }
+
         Bukkit.broadcast(Component.text("Choose a role using the /runner or /hunter command").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
         isPregame = true;
+
 
         List<Player> activePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         activePlayers.forEach(plr -> plr.setGameMode(GameMode.SPECTATOR));
@@ -110,17 +139,38 @@ public class ManhuntController implements Minigame {
                 return;
             }
 
-            Game();
+            Game(world);
         }, () -> !isActive);
     }
 
-    private void Game() {
+    private void Game(World startWorld) {
         if(!isActive) return;
         players.addAll(hunters);
         players.addAll(runners);
         aliveRunners.addAll(runners);
 
+        boolean clearInventories = CmbMinigames.getPlugin().getConfig()
+                .getBoolean("minigames.manhunt.clear_start");
 
+        aliveRunners.forEach(plr -> {
+            plr.setGameMode(GameMode.SURVIVAL);
+            plr.teleport(startWorld.getSpawnLocation());
+
+            if(clearInventories) {
+                plr.getInventory().clear();
+            }
+        });
+
+        Helpers.Countdown(hunters, Constants.ManhuntRunnerHeadstart, Component.text("You're about to be released!"), () -> {
+            hunters.forEach(plr -> {
+                plr.setGameMode(GameMode.SURVIVAL);
+                plr.teleport(startWorld.getSpawnLocation());
+
+                if(clearInventories) {
+                    plr.getInventory().clear();
+                }
+            });
+        }, () -> !isActive || aliveRunners.isEmpty());
     }
 
     private void RunnerDeath(Player player) {

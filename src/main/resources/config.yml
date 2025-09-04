@@ -8,3 +8,9 @@ minigames:
       - "world"
       - "world_nether"
       - "world_the_end"
+  manhunt:
+    # The world name where players will spawn
+    play_world: "world"
+
+    # Should runners and hunters have their inventories cleared upon starting the game?
+    clear_start: true
