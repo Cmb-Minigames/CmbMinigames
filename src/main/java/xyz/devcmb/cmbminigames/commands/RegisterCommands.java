@@ -4,7 +4,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.commands.completions.MinigameCommandCompletion;
+import xyz.devcmb.cmbminigames.commands.minigames.HunterCommand;
 import xyz.devcmb.cmbminigames.commands.minigames.MinigameCommand;
+import xyz.devcmb.cmbminigames.commands.minigames.RunnerCommand;
 
 import java.util.Objects;
 
@@ -12,6 +14,8 @@ public class RegisterCommands {
     public static void RegisterAllCommands() {
         // Commands
         registerSingleCommand("minigame", new MinigameCommand());
+        registerSingleCommand("hunter", new HunterCommand());
+        registerSingleCommand("runner", new RunnerCommand());
 
         // Completions
         registerSingleTabCompletion("minigame", new MinigameCommandCompletion());

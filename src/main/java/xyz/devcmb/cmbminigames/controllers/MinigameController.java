@@ -80,13 +80,18 @@ public class MinigameController {
     }
 
     private static void registerMinigame(Minigame minigame) {
-        minigames.put(minigame.getId(), minigame);
-
         Permission permission = new Permission("cmbminigames.minigame." + minigame.getId(), PermissionDefault.OP);
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.addPermission(permission);
         pm.registerEvents(minigame, CmbMinigames.getPlugin());
+
+        minigame.load();
+        minigames.put(minigame.getId(), minigame);
+    }
+
+    public static void unloadMinigames() {
+        minigames.forEach((name, minigame) -> minigame.unload());
     }
 
     public static Minigame getMinigame(String id) {

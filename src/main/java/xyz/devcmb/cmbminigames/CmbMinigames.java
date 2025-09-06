@@ -35,5 +35,7 @@ public final class CmbMinigames extends JavaPlugin {
         if(MinigameController.getActiveMinigame() != null) {
             MinigameController.stopMinigame();
         }
+
+        MinigameController.unloadMinigames();
     }
 }

@@ -14,4 +14,10 @@ permissions:
 commands:
   minigame:
     description: Interface with the minigames from CmbMinigames
+    usage: /<command> <start | end | list>
+  hunter:
+    description: Set your role to hunter in manhunt
+    usage: /<command>
+  runner:
+    description: Set your role to runner in manhunt
     usage: /<command>

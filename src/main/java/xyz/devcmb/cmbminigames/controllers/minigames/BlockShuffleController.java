@@ -51,6 +51,11 @@ public class BlockShuffleController implements Minigame {
     }
 
     @Override
+    public boolean getActive() {
+        return isActive;
+    }
+
+    @Override
     public Component getHowToPlay() {
         return
                 Component.text("Welcome to ")

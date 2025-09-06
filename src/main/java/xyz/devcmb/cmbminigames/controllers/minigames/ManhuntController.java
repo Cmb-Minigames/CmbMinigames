@@ -1,14 +1,20 @@
 package xyz.devcmb.cmbminigames.controllers.minigames;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.boss.DragonBattle;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.Constants;
 import xyz.devcmb.cmbminigames.controllers.MinigameController;
@@ -19,22 +25,18 @@ import java.util.List;
 
 /**
  * TODO list
- * - Allow role assignment through a command (/runner and /hunter)
- * - Make the game end when any runner makes it to the end fountain
  * - Give a better team indication
- * - Handle midgame join
- * - TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
- * - Fix the 10k bugs I find during testing
  */
 
 public class ManhuntController implements Minigame {
     private boolean isActive = false;
-    private boolean isPregame = false;
+    public boolean isPregame = false;
 
-    private static List<Player> players = new ArrayList<>();
-    private static List<Player> hunters = new ArrayList<>();
-    private static List<Player> runners = new ArrayList<>();
-    private static List<Player> aliveRunners = new ArrayList<>();
+    private static final List<Player> players = new ArrayList<>();
+    private static final List<Player> hunters = new ArrayList<>();
+    private static final List<Player> runners = new ArrayList<>();
+    private static final List<Player> aliveRunners = new ArrayList<>();
+    private static final List<Player> waitingPlayers = new ArrayList<>();
 
     @Override
     public String getId() {
@@ -49,6 +51,11 @@ public class ManhuntController implements Minigame {
     @Override
     public Integer minimumPlayers() {
         return 2;
+    }
+
+    @Override
+    public boolean getActive() {
+        return isActive;
     }
 
     @Override
@@ -94,9 +101,25 @@ public class ManhuntController implements Minigame {
             return;
         }
 
+        World endWorld = Bukkit.getWorlds().stream()
+                .filter(w -> w.getEnvironment() == World.Environment.THE_END)
+                .findFirst()
+                .orElse(null);
+
+        if(endWorld != null) {
+            DragonBattle battle = endWorld.getEnderDragonBattle();
+            boolean hasDragon = endWorld.getEntities().stream()
+                    .anyMatch(e -> e instanceof EnderDragon);
+
+            if(!hasDragon && battle.hasBeenPreviouslyKilled()) {
+                Bukkit.broadcast(Component.text("Could not start manhunt: End dimension does not have an ender dragon.").color(NamedTextColor.RED));
+                MinigameController.stopMinigame();
+                return;
+            }
+        }
+
         Bukkit.broadcast(Component.text("Choose a role using the /runner or /hunter command").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
         isPregame = true;
-
 
         List<Player> activePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         activePlayers.forEach(plr -> plr.setGameMode(GameMode.SPECTATOR));
@@ -161,16 +184,14 @@ public class ManhuntController implements Minigame {
             }
         });
 
-        Helpers.Countdown(hunters, Constants.ManhuntRunnerHeadstart, Component.text("You're about to be released!"), () -> {
-            hunters.forEach(plr -> {
-                plr.setGameMode(GameMode.SURVIVAL);
-                plr.teleport(startWorld.getSpawnLocation());
+        Helpers.Countdown(hunters, Constants.ManhuntRunnerHeadstart, Component.text("You're about to be released!"), () -> hunters.forEach(plr -> {
+            plr.setGameMode(GameMode.SURVIVAL);
+            plr.teleport(startWorld.getSpawnLocation());
 
-                if(clearInventories) {
-                    plr.getInventory().clear();
-                }
-            });
-        }, () -> !isActive || aliveRunners.isEmpty());
+            if(clearInventories) {
+                plr.getInventory().clear();
+            }
+        }), () -> !isActive || aliveRunners.isEmpty());
     }
 
     private void RunnerDeath(Player player) {
@@ -186,8 +207,29 @@ public class ManhuntController implements Minigame {
             return;
         }
 
-        hunters.forEach((plr) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.VICTORY, Component.text("")));
-        runners.forEach((plr) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.DEFEAT, Component.text("")));
+        hunters.forEach((plr) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.VICTORY, Component.text("You will be placed into survival in 5 seconds.")));
+        runners.forEach((plr) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.DEFEAT, Component.text("You will be placed into survival in 5 seconds.")));
+        players.forEach((plr) -> {
+            plr.setGameMode(GameMode.SPECTATOR);
+        });
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
+            // I did a really fun thought experiment when making this, I hope you can tell
+            if(!isActive) return;
+            MinigameController.stopMinigame();
+        }, 5 * 20);
+    }
+
+    private void RunnerWin() {
+        runners.forEach((player) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.VICTORY, Component.text("You will be placed into survival in 5 seconds.")));
+        hunters.forEach((player) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.DEFEAT, Component.text("You will be placed into survival in 5 seconds.")));
+        players.forEach((plr) -> plr.setGameMode(GameMode.SPECTATOR));
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
+            // I did a really fun thought experiment when making this, I hope you can tell
+            if(!isActive) return;
+            MinigameController.stopMinigame();
+        }, 5 * 20);
     }
 
     @EventHandler
@@ -200,16 +242,74 @@ public class ManhuntController implements Minigame {
         }
     }
 
+    @EventHandler
+    public void playerJoin(PlayerJoinEvent event) {
+        if(!isActive) return;
+        Player player = event.getPlayer();
+        waitingPlayers.add(player);
+        player.setGameMode(GameMode.SPECTATOR);
+    }
+
+    @EventHandler
+    public void playerQuit(PlayerQuitEvent event) {
+        if(!isActive) return;
+        Player player = event.getPlayer();
+
+        players.remove(player);
+        runners.remove(player);
+        hunters.remove(player);
+        waitingPlayers.remove(player);
+    }
+
+    @EventHandler
+    public void dragonDeathEvent(EntityDeathEvent event) {
+        if(!isActive) return;
+        if(event.getEntity() instanceof EnderDragon) {
+            RunnerWin();
+        }
+    }
+
     @Override
     public void end() {
         isPregame = false;
+
+        players.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
+        waitingPlayers.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
+
         players.clear();
         hunters.clear();
         runners.clear();
+        waitingPlayers.clear();
     }
 
     @Override
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public void Runner(Player player) {
+        if(!isPregame) return;
+        hunters.remove(player);
+        runners.add(player);
+        Bukkit.broadcast(
+                Component.text(player.getName())
+                        .append(Component.text(" » "))
+                        .append(
+                                Component.text("RUNNER").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)
+                        )
+        );
+    }
+
+    public void Hunter(Player player) {
+        if(!isPregame) return;
+        hunters.add(player);
+        runners.remove(player);
+        Bukkit.broadcast(
+                Component.text(player.getName())
+                        .append(Component.text(" » "))
+                        .append(
+                                Component.text("HUNTER").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
+                        )
+        );
     }
 }

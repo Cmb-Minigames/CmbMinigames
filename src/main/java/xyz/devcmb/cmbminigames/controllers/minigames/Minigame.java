@@ -10,8 +10,12 @@ public interface Minigame extends Listener {
     Component getHowToPlay();
 
 
+    default void load(){}
+    default void unload(){}
+
     void start();
     void end();
 
     void setActive(boolean active);
+    boolean getActive();
 }
