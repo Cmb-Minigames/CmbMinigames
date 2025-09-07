@@ -9,7 +9,6 @@ public interface Minigame extends Listener {
     Integer minimumPlayers();
     Component getHowToPlay();
 
-
     default void load(){}
     default void unload(){}
 

@@ -65,8 +65,8 @@ public class BlockShuffleController implements Minigame {
                                 .append(Component.text(" stand on it.").color(NamedTextColor.GREEN)))
                         .append(Component.newline())
                         .append(
-                                Component.text("However, you only have")
-                                        .append(Component.text(" 5 minutes").color(NamedTextColor.AQUA))
+                                Component.text("However, you only have ")
+                                        .append(Component.text(Math.round(Constants.BlockShuffleTimer / 60f)).append(Component.text(" minutes")).color(NamedTextColor.AQUA))
                                         .append(Component.text(" to stand on your assigned block."))
                         )
                         .append(Component.newline())
@@ -193,9 +193,6 @@ public class BlockShuffleController implements Minigame {
                 Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
                     // I did a really fun thought experiment when making this, I hope you can tell
                     if(!isActive) return;
-
-                    participants.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
-                    waitingPlayers.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
                     MinigameController.stopMinigame();
                 }, 5 * 20);
 
@@ -214,6 +211,9 @@ public class BlockShuffleController implements Minigame {
 
     @Override
     public void end() {
+        participants.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
+        waitingPlayers.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
+
         blocks.clear();
         qualifiers.clear();
         participants.clear();

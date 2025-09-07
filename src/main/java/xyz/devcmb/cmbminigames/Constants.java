@@ -14,6 +14,7 @@ public class Constants {
     public static final Integer MinimumManhuntHunters = 1;
     public static final Integer MaximumManhuntHunters = Integer.MAX_VALUE;
     public static final Integer ManhuntRunnerHeadstart = 20;
+    public static final Integer DeathSwapTimer = 60 * 5;
 
     public static List<Material> GetBlockShuffleBlocks() {
         return List.of(

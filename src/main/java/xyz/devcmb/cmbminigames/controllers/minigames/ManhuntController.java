@@ -1,6 +1,5 @@
 package xyz.devcmb.cmbminigames.controllers.minigames;
 
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -209,9 +208,13 @@ public class ManhuntController implements Minigame {
 
         hunters.forEach((plr) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.VICTORY, Component.text("You will be placed into survival in 5 seconds.")));
         runners.forEach((plr) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.DEFEAT, Component.text("You will be placed into survival in 5 seconds.")));
-        players.forEach((plr) -> {
-            plr.setGameMode(GameMode.SPECTATOR);
-        });
+        players.forEach((plr) -> plr.setGameMode(GameMode.SPECTATOR));
+
+        waitingPlayers.forEach(plr -> Helpers.GameEndAnnouncement(
+                plr,
+                Helpers.GameEndStatus.NO_PARTICIPATION,
+                Component.text("You will be placed into survival in 5 seconds"))
+        );
 
         Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
             // I did a really fun thought experiment when making this, I hope you can tell
@@ -224,6 +227,12 @@ public class ManhuntController implements Minigame {
         runners.forEach((player) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.VICTORY, Component.text("You will be placed into survival in 5 seconds.")));
         hunters.forEach((player) -> Helpers.GameEndAnnouncement(player, Helpers.GameEndStatus.DEFEAT, Component.text("You will be placed into survival in 5 seconds.")));
         players.forEach((plr) -> plr.setGameMode(GameMode.SPECTATOR));
+
+        waitingPlayers.forEach(plr -> Helpers.GameEndAnnouncement(
+                plr,
+                Helpers.GameEndStatus.NO_PARTICIPATION,
+                Component.text("You will be placed into survival in 5 seconds"))
+        );
 
         Bukkit.getScheduler().runTaskLater(CmbMinigames.getPlugin(), () -> {
             // I did a really fun thought experiment when making this, I hope you can tell

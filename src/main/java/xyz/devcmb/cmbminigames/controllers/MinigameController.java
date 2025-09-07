@@ -13,6 +13,7 @@ import org.bukkit.plugin.PluginManager;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.Constants;
 import xyz.devcmb.cmbminigames.controllers.minigames.BlockShuffleController;
+import xyz.devcmb.cmbminigames.controllers.minigames.DeathSwapController;
 import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
 import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
 
@@ -34,6 +35,7 @@ public class MinigameController {
     public static void RegisterAllMinigames() {
         registerMinigame(new BlockShuffleController());
         registerMinigame(new ManhuntController());
+        registerMinigame(new DeathSwapController());
     }
 
     public static void startMinigame(CommandSender starter, String id){
