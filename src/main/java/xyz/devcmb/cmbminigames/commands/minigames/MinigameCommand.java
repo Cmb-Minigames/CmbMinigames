@@ -11,7 +11,7 @@ import xyz.devcmb.cmbminigames.util.Format;
 import java.util.List;
 
 public class MinigameCommand implements CommandExecutor {
-    public static List<String> subcommands = List.of("start", "end", "list");
+    public static List<String> subcommands = List.of("start", "forcestop", "list");
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
@@ -48,7 +48,7 @@ public class MinigameCommand implements CommandExecutor {
                 commandSender.sendMessage(Format.format("Sent signal for minigame start!", Format.FormatType.SUCCESS));
                 MinigameController.startMinigame(commandSender, minigameName);
                 return true;
-            case "end":
+            case "forcestop":
                 Minigame activeMinigame = MinigameController.getActiveMinigame();
                 if(activeMinigame == null) {
                     commandSender.sendMessage(Format.format("There is no active minigame!", Format.FormatType.INVALID));

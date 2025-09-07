@@ -23,9 +23,9 @@ import java.util.List;
 public class DeathSwapController implements Minigame {
     public boolean isActive = false;
 
-    public static List<Player> players = new ArrayList<>();
-    public static List<Player> alivePlayers = new ArrayList<>();
-    public static List<Player> waitingPlayers = new ArrayList<>();
+    public final List<Player> players = new ArrayList<>();
+    public final List<Player> alivePlayers = new ArrayList<>();
+    public final List<Player> waitingPlayers = new ArrayList<>();
 
     @Override
     public String getId() {
@@ -71,7 +71,24 @@ public class DeathSwapController implements Minigame {
 
     private void Game() {
         Timer.CreateTimer("deathswap_timer", Constants.DeathSwapTimer, (timeLeft) -> {
+            alivePlayers.removeIf(plr -> !plr.isOnline());
+            players.removeIf(plr -> !plr.isOnline());
+            waitingPlayers.removeIf(plr -> !plr.isOnline());
 
+            if(players.isEmpty()) {
+                MinigameController.stopMinigame();
+                return;
+            }
+
+            players.forEach(player -> player.sendActionBar(
+                    Component.text(Helpers.formatTime(timeLeft))
+                            .color(NamedTextColor.YELLOW)
+                            .decorate(TextDecoration.BOLD)
+            ));
+
+            if(timeLeft == 10) {
+                Helpers.Countdown(alivePlayers, 10, Component.text("Swapping in..."), () -> {}, () -> false);
+            }
         }, (early) -> {
             if(early) {
                 endGame();
@@ -79,7 +96,8 @@ public class DeathSwapController implements Minigame {
             }
 
             swap();
-        }, () -> alivePlayers.size() <= 1 || players.isEmpty() || !isActive);
+            Game();
+        }, () -> alivePlayers.size() <= 1 || !isActive);
     }
 
     private void endGame(){
@@ -138,6 +156,8 @@ public class DeathSwapController implements Minigame {
 
     @EventHandler
     public void playerJoin(PlayerJoinEvent event){
+        if(!isActive) return;
+
         Player player = event.getPlayer();
         waitingPlayers.add(player);
         player.setGameMode(GameMode.SPECTATOR);
@@ -145,10 +165,15 @@ public class DeathSwapController implements Minigame {
 
     @EventHandler
     public void playerLeave(PlayerJoinEvent event){
+        if(!isActive) return;
+
         Player player = event.getPlayer();
-        alivePlayers.remove(player);
-        players.remove(player);
-        waitingPlayers.remove(player);
+        if(player.getGameMode().equals(GameMode.SPECTATOR)) {
+            player.setGameMode(GameMode.SURVIVAL);
+        }
+//        alivePlayers.remove(player);
+//        players.remove(player);
+//        waitingPlayers.remove(player);
     }
 
     @Override

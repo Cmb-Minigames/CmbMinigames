@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import java.util.List;
 
 public class Constants {
-    public static final boolean IsDevelopment = true;
+    public static final boolean IsDevelopment = false;
 
     // Do later: move these to config
     public static final Integer BlockShuffleTimer = 60 * 5;
@@ -14,7 +14,7 @@ public class Constants {
     public static final Integer MinimumManhuntHunters = 1;
     public static final Integer MaximumManhuntHunters = Integer.MAX_VALUE;
     public static final Integer ManhuntRunnerHeadstart = 20;
-    public static final Integer DeathSwapTimer = 60 * 5;
+    public static final Integer DeathSwapTimer = 60 * 1;
 
     public static List<Material> GetBlockShuffleBlocks() {
         return List.of(

@@ -25,17 +25,18 @@ import java.util.List;
 /**
  * TODO list
  * - Give a better team indication
+ * - Maybe give a compass?
  */
 
 public class ManhuntController implements Minigame {
     private boolean isActive = false;
     public boolean isPregame = false;
 
-    private static final List<Player> players = new ArrayList<>();
-    private static final List<Player> hunters = new ArrayList<>();
-    private static final List<Player> runners = new ArrayList<>();
-    private static final List<Player> aliveRunners = new ArrayList<>();
-    private static final List<Player> waitingPlayers = new ArrayList<>();
+    private final List<Player> players = new ArrayList<>();
+    public final List<Player> hunters = new ArrayList<>();
+    public final List<Player> runners = new ArrayList<>();
+    private final List<Player> aliveRunners = new ArrayList<>();
+    private final List<Player> waitingPlayers = new ArrayList<>();
 
     @Override
     public String getId() {
@@ -266,8 +267,13 @@ public class ManhuntController implements Minigame {
 
         players.remove(player);
         runners.remove(player);
+        aliveRunners.remove(player);
         hunters.remove(player);
         waitingPlayers.remove(player);
+
+        if(player.getGameMode().equals(GameMode.SPECTATOR)) {
+            player.setGameMode(GameMode.SURVIVAL);
+        }
     }
 
     @EventHandler

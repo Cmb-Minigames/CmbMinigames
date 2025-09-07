@@ -132,6 +132,11 @@ public class BlockShuffleController implements Minigame {
 
         qualifiers.clear();
         Timer.CreateTimer("blockshuffle_timer", Constants.BlockShuffleTimer, (timeLeft) -> {
+            participants.removeIf(plr -> !plr.isOnline());
+            aliveParticipants.removeIf(plr -> !plr.isOnline());
+            qualifiers.removeIf(plr -> !plr.isOnline());
+            waitingPlayers.removeIf(plr -> !plr.isOnline());
+
             if(participants.isEmpty()) {
                 MinigameController.stopMinigame();
                 return;
@@ -258,10 +263,6 @@ public class BlockShuffleController implements Minigame {
         }
 
         blocks.remove(player);
-        participants.remove(player);
-        aliveParticipants.remove(player);
-        qualifiers.remove(player);
-        waitingPlayers.remove(player);
     }
 
     @EventHandler

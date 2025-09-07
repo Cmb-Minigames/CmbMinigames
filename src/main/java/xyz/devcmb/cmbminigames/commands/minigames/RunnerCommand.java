@@ -1,10 +1,13 @@
 package xyz.devcmb.cmbminigames.commands.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import xyz.devcmb.cmbminigames.Constants;
 import xyz.devcmb.cmbminigames.controllers.MinigameController;
 import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
 import xyz.devcmb.cmbminigames.util.Format;
@@ -22,6 +25,16 @@ public class RunnerCommand implements CommandExecutor {
 
         if(!manhuntController.isPregame) {
             sender.sendMessage(Format.format("You can only select a role during pregame!", Format.FormatType.INVALID));
+            return true;
+        }
+
+        if(manhuntController.runners.size() >= Constants.MaximumManhuntRunners) {
+            sender.sendMessage(Format.format(
+                    Component.text("There are too many runners! Only ")
+                            .append(Component.text(Constants.MaximumManhuntRunners).decorate(TextDecoration.BOLD))
+                            .append(Component.text(" runners are allowed!"))
+                    , Format.FormatType.INVALID));
+
             return true;
         }
 
