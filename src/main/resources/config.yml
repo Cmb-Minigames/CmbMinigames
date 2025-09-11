@@ -14,3 +14,13 @@ minigames:
 
     # Should runners and hunters have their inventories cleared upon starting the game?
     clear_start: true
+  deathshuffle:
+    # If this is true, keep inventory will be enabled and then reset to its previous state when the minigame ends.
+    # Pretty bad idea to disable this in death SHUFFLE of all things, but it is a thing you can change
+    useKeepInventory: true
+
+    # The worlds you will be playing on (required for the option above)
+    worlds:
+      - "world"
+      - "world_nether"
+      - "world_the_end"

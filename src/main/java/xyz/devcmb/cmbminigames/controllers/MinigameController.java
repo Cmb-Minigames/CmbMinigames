@@ -12,10 +12,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.Constants;
-import xyz.devcmb.cmbminigames.controllers.minigames.BlockShuffleController;
-import xyz.devcmb.cmbminigames.controllers.minigames.DeathSwapController;
-import xyz.devcmb.cmbminigames.controllers.minigames.ManhuntController;
-import xyz.devcmb.cmbminigames.controllers.minigames.Minigame;
+import xyz.devcmb.cmbminigames.controllers.minigames.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +33,7 @@ public class MinigameController {
         registerMinigame(new BlockShuffleController());
         registerMinigame(new ManhuntController());
         registerMinigame(new DeathSwapController());
+        registerMinigame(new DeathShuffleController());
     }
 
     public static void startMinigame(CommandSender starter, String id){

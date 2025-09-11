@@ -1,11 +1,12 @@
 package xyz.devcmb.cmbminigames;
 
 import org.bukkit.Material;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.List;
 
 public class Constants {
-    public static final boolean IsDevelopment = false;
+    public static final boolean IsDevelopment = true;
 
     // Do later: move these to config
     public static final Integer BlockShuffleTimer = 60 * 5;
@@ -14,7 +15,22 @@ public class Constants {
     public static final Integer MinimumManhuntHunters = 1;
     public static final Integer MaximumManhuntHunters = Integer.MAX_VALUE;
     public static final Integer ManhuntRunnerHeadstart = 20;
-    public static final Integer DeathSwapTimer = 60 * 1;
+    public static final Integer DeathSwapTimer = 60 * 5;
+    public static final Integer DeathShuffleTimer = 60 * 7;
+
+    public static List<EntityDamageEvent.DamageCause> GetDeathShuffleDeaths() {
+        return List.of(
+                EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+                EntityDamageEvent.DamageCause.DROWNING,
+                EntityDamageEvent.DamageCause.FALL,
+                EntityDamageEvent.DamageCause.LAVA,
+                EntityDamageEvent.DamageCause.LIGHTNING,
+                EntityDamageEvent.DamageCause.CRAMMING,
+                EntityDamageEvent.DamageCause.VOID,
+                EntityDamageEvent.DamageCause.HOT_FLOOR,
+                EntityDamageEvent.DamageCause.STARVATION
+        );
+    }
 
     public static List<Material> GetBlockShuffleBlocks() {
         return List.of(

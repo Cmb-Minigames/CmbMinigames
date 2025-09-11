@@ -4,11 +4,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import xyz.devcmb.cmbminigames.CmbMinigames;
 import xyz.devcmb.cmbminigames.Constants;
@@ -22,11 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class BlockShuffleController implements Minigame {
-    public boolean isActive = false;
+public class DeathShuffleController implements Minigame {
+    private boolean isActive = false;
 
-    private final Map<Player, Material> blocks = new HashMap<>();
-
+    private final Map<Player, EntityDamageEvent.DamageCause> deathSources = new HashMap<>();
     private final List<Player> participants = new ArrayList<>();
     private final List<Player> aliveParticipants = new ArrayList<>();
 
@@ -37,12 +36,12 @@ public class BlockShuffleController implements Minigame {
 
     @Override
     public String getId() {
-        return "blockshuffle";
+        return "deathshuffle";
     }
 
     @Override
     public String getName() {
-        return "Block Shuffle";
+        return "Death Shuffle";
     }
 
     @Override
@@ -51,26 +50,21 @@ public class BlockShuffleController implements Minigame {
     }
 
     @Override
-    public boolean getActive() {
-        return isActive;
-    }
-
-    @Override
     public Component getHowToPlay() {
         return
                 Component.text("Welcome to ")
-                        .append(Component.text("Block Shuffle!").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+                        .append(Component.text("Death Shuffle!").color(NamedTextColor.RED).decorate(TextDecoration.BOLD))
                         .append(Component.newline())
-                        .append(Component.text("The premise is simple, you will be assigned a block and you must retrieve that block from somewhere in the world and")
-                                .append(Component.text(" stand on it.").color(NamedTextColor.GREEN)))
+                        .append(Component.text("The premise is simple, you will be assigned a death source, and you will need to ")
+                                .append(Component.text("die by it.").color(NamedTextColor.RED)))
                         .append(Component.newline())
                         .append(
                                 Component.text("However, you only have ")
-                                        .append(Component.text(Math.round(Constants.BlockShuffleTimer / 60f)).append(Component.text(" minutes")).color(NamedTextColor.AQUA))
-                                        .append(Component.text(" to stand on your assigned block."))
+                                        .append(Component.text(Math.round(Constants.DeathShuffleTimer / 60f)).append(Component.text(" minutes")).color(NamedTextColor.AQUA))
+                                        .append(Component.text(" to die by your assigned source."))
                         )
                         .append(Component.newline())
-                        .append(Component.text("If you do not get your block in time, you will be").append(Component.text(" ELIMINATED!").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)))
+                        .append(Component.text("If you do not properly die in time, you will be").append(Component.text(" ELIMINATED!").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)))
                         .append(Component.newline())
                         .append(Component.text("Have fun!").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
                 ;
@@ -81,18 +75,18 @@ public class BlockShuffleController implements Minigame {
         keepInventoryDefaults.clear();
 
         boolean useKeepInventory = CmbMinigames.getPlugin().getConfig()
-                .getBoolean("minigames.blockshuffle.useKeepInventory");
+                .getBoolean("minigames.deathshuffle.useKeepInventory");
 
         @SuppressWarnings("unchecked")
         List<String> playWorlds = (List<String>) CmbMinigames.getPlugin().getConfig()
-                .getList("minigames.blockshuffle.worlds");
+                .getList("minigames.deathshuffle.worlds");
 
         if(useKeepInventory) {
             assert playWorlds != null;
             playWorlds.forEach(world -> {
                 World registeredWorld = Bukkit.getWorld(world);
                 if(registeredWorld == null) {
-                    CmbMinigames.LOGGER.warning("World " + world + " not found! Error in minigames.blockshuffle.worlds config!");
+                    CmbMinigames.LOGGER.warning("World " + world + " not found! Error in minigames.deathshuffle.worlds config!");
                     return;
                 }
 
@@ -111,22 +105,21 @@ public class BlockShuffleController implements Minigame {
     private void Game() {
         if(!isActive) return;
 
-        blocks.clear();
+        deathSources.clear();
         qualifiers.forEach(player -> {
             if(!player.isOnline()) return;
-            Material block = Helpers.getRandom(Constants.GetBlockShuffleBlocks());
-            blocks.put(player, block);
+            EntityDamageEvent.DamageCause cause = Helpers.getRandom(Constants.GetDeathShuffleDeaths());
+            deathSources.put(player, cause);
 
             player.sendMessage(
-                    Component.text("Stand on a ")
-                            .append(
-                                    Component.text(Helpers.materialToDisplayName(block))
+                    Component.text("Die by ")
+                            .append(Component.text(cause.name())
                                             .decorate(TextDecoration.BOLD))
                             .color(NamedTextColor.GREEN));
         });
 
         qualifiers.clear();
-        Timer.CreateTimer("blockshuffle_timer", Constants.BlockShuffleTimer, (timeLeft) -> {
+        Timer.CreateTimer("deathshuffle_timer", Constants.DeathShuffleTimer, (timeLeft) -> {
             participants.removeIf(plr -> !plr.isOnline());
             aliveParticipants.removeIf(plr -> !plr.isOnline());
             qualifiers.removeIf(plr -> !plr.isOnline());
@@ -147,7 +140,7 @@ public class BlockShuffleController implements Minigame {
 
             if(qualifiers.isEmpty()) {
                 Bukkit.broadcast(
-                        Component.text("No one found their block, so another round will be played!")
+                        Component.text("No one died by their death source, so another round will be played!")
                                 .color(NamedTextColor.YELLOW)
                 );
 
@@ -157,8 +150,8 @@ public class BlockShuffleController implements Minigame {
             }
 
             AtomicBoolean eliminatedPlayers = new AtomicBoolean(false);
-            if(!blocks.isEmpty()) {
-                blocks.keySet().forEach(player -> {
+            if(!deathSources.isEmpty()) {
+                deathSources.keySet().forEach(player -> {
                     aliveParticipants.remove(player);
                     player.setGameMode(GameMode.SPECTATOR);
                     player.sendMessage(
@@ -171,8 +164,8 @@ public class BlockShuffleController implements Minigame {
 
                     Bukkit.broadcast(
                             Component.text(
-                                    player.getName() + " did not find their block in time! Their block was "
-                            ).append(Component.text(Helpers.materialToDisplayName(blocks.get(player))).decorate(TextDecoration.BOLD)).color(NamedTextColor.RED)
+                                    player.getName() + " did not properly die in time! Their source was "
+                            ).append(Component.text(deathSources.get(player).name()).decorate(TextDecoration.BOLD)).color(NamedTextColor.RED)
                     );
                 });
             }
@@ -201,12 +194,12 @@ public class BlockShuffleController implements Minigame {
 
             if(qualifiers.size() == aliveParticipants.size() && !eliminatedPlayers.get()) {
                 Bukkit.broadcast(
-                        Component.text("Everyone has found their block in time! Continuing...").color(NamedTextColor.YELLOW)
+                        Component.text("Everyone died in time! Continuing...").color(NamedTextColor.YELLOW)
                 );
             }
 
             Game();
-        }, () -> blocks.isEmpty() || !isActive);
+        }, () -> deathSources.isEmpty() || !isActive);
     }
 
     @Override
@@ -214,7 +207,7 @@ public class BlockShuffleController implements Minigame {
         participants.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
         waitingPlayers.forEach(plr -> plr.setGameMode(GameMode.SURVIVAL));
 
-        blocks.clear();
+        deathSources.clear();
         qualifiers.clear();
         participants.clear();
         aliveParticipants.clear();
@@ -230,34 +223,44 @@ public class BlockShuffleController implements Minigame {
         waitingPlayers.clear();
     }
 
+    @Override
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @EventHandler
-    public void playerMove(PlayerMoveEvent event) {
+    public void playerDeath(PlayerDeathEvent event) {
         Player player = event.getPlayer();
-        if(!isActive || !blocks.containsKey(player)) return;
+        if(!isActive || !deathSources.containsKey(player)) return;
 
-        Block belowBlock = player.getLocation().add(0, -1, 0).getBlock();
-        if(belowBlock.getType() == blocks.get(player)) {
-            blocks.remove(player);
-            qualifiers.add(player);
+        EntityDamageEvent lastDamage = player.getLastDamageCause();
+        if (lastDamage != null) {
+            EntityDamageEvent.DamageCause cause = lastDamage.getCause();
+            EntityDamageEvent.DamageCause playerCause = deathSources.get(player);
 
-            Bukkit.broadcast(
-                    Component.text(
-                            player.getName() + " found their block! Their block was "
-                    ).append(Component.text(Helpers.materialToDisplayName(belowBlock.getType())).decorate(TextDecoration.BOLD)).color(NamedTextColor.GREEN)
-            );
+            if(playerCause == cause) {
+                qualifiers.add(player);
+                deathSources.remove(player);
+
+                Bukkit.broadcast(
+                        Component.text(
+                                player.getName() + " died! Their source was "
+                        ).append(Component.text(playerCause.name()).decorate(TextDecoration.BOLD)).color(NamedTextColor.GREEN)
+                );
+            }
         }
     }
 
     @EventHandler
     public void playerLeft(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if(!isActive || !blocks.containsKey(player)) return;
+        if(!isActive || !deathSources.containsKey(player)) return;
 
         if(player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
 
-        blocks.remove(player);
+        deathSources.remove(player);
     }
 
     @EventHandler
@@ -270,14 +273,14 @@ public class BlockShuffleController implements Minigame {
 
         player.sendMessage(
                 Component.text("A game of ")
-                        .append(Component.text("Block Shuffle").decorate(TextDecoration.BOLD))
+                        .append(Component.text("Death Shuffle").decorate(TextDecoration.BOLD))
                         .append(Component.text(" is currently active. You will exit spectator once the game ends."))
                         .color(NamedTextColor.GREEN)
         );
     }
 
     @Override
-    public void setActive(boolean active) {
-        isActive = active;
+    public boolean getActive() {
+        return isActive;
     }
 }
