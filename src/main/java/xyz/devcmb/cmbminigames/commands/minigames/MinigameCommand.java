@@ -1,5 +1,7 @@
 package xyz.devcmb.cmbminigames.commands.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -64,7 +66,18 @@ public class MinigameCommand implements CommandExecutor {
                 MinigameController.stopMinigame();
                 return true;
             case "list":
-                // TODO
+                Component header = Component.text("Here is a list of the minigames:").append(Component.newline()).color(NamedTextColor.GOLD);
+                List<Component> minigameLines = MinigameController.getMinigames().keySet().stream()
+                        .map(name -> (Component) Component.text("• ").color(NamedTextColor.WHITE).append(Component.text(name).color(NamedTextColor.YELLOW)))
+                        .toList();
+
+                Component fullList = header;
+                for (Component line : minigameLines) {
+                    fullList = fullList.append(Component.newline()).append(line);
+                }
+
+                commandSender.sendMessage(fullList);
+                return true;
             default:
                 commandSender.sendMessage(Format.format("Subcommand " + args[0] + " not implemented. Contact the developer.", Format.FormatType.ERROR));
         }
