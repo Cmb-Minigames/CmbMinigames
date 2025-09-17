@@ -6,7 +6,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import java.util.List;
 
 public class Constants {
-    public static final boolean IsDevelopment = true;
+    public static final boolean IsDevelopment = false;
 
     // Do later: move these to config
     public static final Integer BlockShuffleTimer = 60 * 5;
@@ -28,7 +28,11 @@ public class Constants {
                 EntityDamageEvent.DamageCause.CRAMMING,
                 EntityDamageEvent.DamageCause.VOID,
                 EntityDamageEvent.DamageCause.HOT_FLOOR,
-                EntityDamageEvent.DamageCause.STARVATION
+//                EntityDamageEvent.DamageCause.STARVATION
+                EntityDamageEvent.DamageCause.CAMPFIRE,
+                EntityDamageEvent.DamageCause.FREEZE,
+                EntityDamageEvent.DamageCause.SUFFOCATION,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK
         );
     }
 
