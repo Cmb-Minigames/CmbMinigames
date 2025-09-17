@@ -3,9 +3,7 @@ package xyz.devcmb.cmbminigames.controllers.minigames;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
@@ -24,8 +22,7 @@ import java.util.List;
 
 /**
  * TODO list
- * - Give a better team indication
- * - Maybe give a compass?
+ * - Maybe give a compass? (fuck it, you have the locator bar)
  */
 
 public class ManhuntController implements Minigame {
@@ -191,6 +188,8 @@ public class ManhuntController implements Minigame {
             if(clearInventories) {
                 plr.getInventory().clear();
             }
+
+            Bukkit.broadcast(Component.text("The hunters have been released!").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
         }), () -> !isActive || aliveRunners.isEmpty());
     }
 
