@@ -3,6 +3,8 @@
 # Cmb Minigames
 An open source minecraft plugin for playing a variety of minigames with your friends
 
+A video demo can be found [here](https://youtu.be/MwLLYsCOvPg)
+
 ## Minigames
 - Manhunt
     - Players pick if they want to be a runner or a hunter using the `/runner` and `/hunter` commands
