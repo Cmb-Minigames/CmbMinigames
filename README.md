@@ -3,6 +3,8 @@
 # Cmb Minigames
 An open source minecraft plugin for playing a variety of minigames with your friends
 
+A video demo can be found [here](https://youtu.be/MwLLYsCOvPg)
+
 ### Disclaimer
 This is a **plugin**, not a mod, meaning you need a spigot or paper server to run it. It also requires at least 2 players to start any minigames (unless debugging mode is enabled)
 
@@ -14,6 +16,7 @@ In order to interface with the commands of the plugin, all the subcommands are a
 `/minigame forcestop` - Force stop the active minigame. **May lead to buggy behavior**
 
 `/minigame list` - See all the playable minigames
+
 
 ## Minigames
 - Manhunt
